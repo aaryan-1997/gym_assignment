@@ -4,8 +4,6 @@ import 'package:get/get.dart';
 import '../../core/helpers/app_utils.dart';
 
 class SplashController extends GetxController {
-
-
   Future<bool> handleLocationPermission() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -21,16 +19,14 @@ class SplashController extends GetxController {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
         AppUtils.showErrorSnackBar('Location permissions are denied');
-        return false;
+        return Geolocator.openAppSettings();
       }
     }
     if (permission == LocationPermission.deniedForever) {
       AppUtils.showErrorSnackBar(
           'Location permissions are permanently denied, we cannot request permissions.');
-      Geolocator.openLocationSettings();
-      return false;
+      return Geolocator.openAppSettings();
     }
     return true;
   }
-
 }
