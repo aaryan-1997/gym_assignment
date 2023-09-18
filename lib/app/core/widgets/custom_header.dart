@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 class CustomHeaderPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    Paint paint_0_fill = Paint()..style = PaintingStyle.fill;
-    paint_0_fill.color = Colors.white.withOpacity(0);
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint_0_fill);
+    Paint paint0Fill = Paint()..style = PaintingStyle.fill;
+    paint0Fill.color = Colors.white.withOpacity(0);
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint0Fill);
 
     Path path_1 = Path();
     path_1.moveTo(size.width * 0.003745318, size.height * 0.2909091);
@@ -39,19 +39,19 @@ class CustomHeaderPainter extends CustomPainter {
     // paint_1_stroke.color = Colors.black.withOpacity(1.0);
     // canvas.drawPath(path_1, paint_1_stroke);
 
-    Paint paint_1_fill = Paint()..style = PaintingStyle.fill;
-    paint_1_fill.shader = ui.Gradient.linear(
+    Paint paint1Fill = Paint()..style = PaintingStyle.fill;
+    paint1Fill.shader = ui.Gradient.linear(
         Offset(size.width * 0.2397004, size.height * 0.9818182),
         Offset(size.width * 0.9962547, size.height * 0.9818182), [
-      Color(0xffBC2020).withOpacity(1),
-      Color(0xffDA7A0A).withOpacity(1),
-      Color(0xffCF7171).withOpacity(0)
+      const Color(0xffBC2020).withOpacity(1),
+      const Color(0xffDA7A0A).withOpacity(1),
+      const Color(0xffCF7171).withOpacity(0)
     ], [
       0,
       1,
       1
     ]);
-    canvas.drawPath(path_1, paint_1_fill);
+    canvas.drawPath(path_1, paint1Fill);
   }
 
   @override

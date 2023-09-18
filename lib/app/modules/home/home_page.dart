@@ -6,6 +6,7 @@ import 'package:gym_assignment/app/core/config/dimensions.dart';
 import 'package:gym_assignment/app/core/theme/app_color.dart';
 import 'package:gym_assignment/app/core/widgets/small_text.dart';
 import 'package:gym_assignment/app/data/models/filter_model.dart';
+import 'package:gym_assignment/app/routes/search_routes.dart';
 
 import 'home_controller.dart';
 
@@ -20,7 +21,7 @@ class HomePage extends GetView<HomeController> {
           SliverAppBar(title: HomeHeader()),
           SliverToBoxAdapter(child: SearchContainer()),
           SliverToBoxAdapter(child: FilterContainer()),
-          GymList()
+          GymList(),
         ],
       ),
     );
@@ -277,45 +278,48 @@ class SearchContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(
-        vertical: Dimensions.height5,
-        horizontal: Dimensions.width15 / 2,
-      ),
-      padding: EdgeInsets.symmetric(
-          vertical: Dimensions.height5, horizontal: Dimensions.width15 / 2),
-      decoration: BoxDecoration(
-        color: AppColor.greyColor.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(Dimensions.radius25),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Text(
-            " Search by gym name",
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: AppColor.greyColor,
+    return GestureDetector(
+      onTap: () => Get.toNamed(SearchRoutes.search),
+      child: Container(
+        margin: EdgeInsets.symmetric(
+          vertical: Dimensions.height5,
+          horizontal: Dimensions.width15 / 2,
+        ),
+        padding: EdgeInsets.symmetric(
+            vertical: Dimensions.height5, horizontal: Dimensions.width15 / 2),
+        decoration: BoxDecoration(
+          color: AppColor.greyColor.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(Dimensions.radius25),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text(
+              " Search by gym name",
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                color: AppColor.greyColor,
+              ),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(
-              vertical: Dimensions.height15 / 2,
-              horizontal: Dimensions.width10 * 1.2,
-            ),
-            decoration: BoxDecoration(
-              color: AppColor.redButtonColor,
-              borderRadius: BorderRadius.circular(Dimensions.radius20),
-            ),
-            child: Icon(
-              Icons.search,
-              size: Dimensions.font24,
-              color: AppColor.whiteColor,
-            ),
-          )
-        ],
+            Container(
+              padding: EdgeInsets.symmetric(
+                vertical: Dimensions.height15 / 2,
+                horizontal: Dimensions.width10 * 1.2,
+              ),
+              decoration: BoxDecoration(
+                color: AppColor.redButtonColor,
+                borderRadius: BorderRadius.circular(Dimensions.radius20),
+              ),
+              child: Icon(
+                Icons.search,
+                size: Dimensions.font24,
+                color: AppColor.whiteColor,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -327,32 +331,35 @@ class HomeHeader extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Icon(Icons.location_pin, size: Dimensions.font16),
-                SizedBox(width: Dimensions.width5 / 2),
-                Text(
-                  controller.currentLocality.value,
-                  style: const TextStyle(
-                      fontSize: 15, fontWeight: FontWeight.w600),
-                ),
-                SizedBox(width: Dimensions.width5 / 2),
-                Icon(Icons.arrow_drop_down, size: Dimensions.iconSize20),
-              ],
-            ),
-            Text(
-              controller.currentAddress.value,
-              style:
-                  const TextStyle(fontSize: 13, fontWeight: FontWeight.normal),
-            ),
-          ],
+      return GestureDetector(
+        onTap: () => Get.toNamed(SearchRoutes.search),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(Icons.location_pin, size: Dimensions.font16),
+                  SizedBox(width: Dimensions.width5 / 2),
+                  Text(
+                    controller.currentLocality.value,
+                    style: const TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
+                  SizedBox(width: Dimensions.width5 / 2),
+                  Icon(Icons.arrow_drop_down, size: Dimensions.iconSize20),
+                ],
+              ),
+              Text(
+                controller.currentAddress.value,
+                style: const TextStyle(
+                    fontSize: 13, fontWeight: FontWeight.normal),
+              ),
+            ],
+          ),
         ),
       );
     });
