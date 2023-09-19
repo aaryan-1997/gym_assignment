@@ -105,7 +105,9 @@ class HomeController extends GetxController {
           }
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      log("message");
+    }
   }
 
 //=================================

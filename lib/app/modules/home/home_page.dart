@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,94 +15,58 @@ class HomePage extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(title: HomeHeader()),
-          SliverToBoxAdapter(child: SearchContainer()),
-          SliverToBoxAdapter(child: FilterContainer()),
-          GymList(),
+    return Scaffold(
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+          const SliverAppBar(title: HomeHeader(), pinned: true),
         ],
+        body: const CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(child: SearchContainer()),
+            SliverToBoxAdapter(child: FilterContainer()),
+            GymList(),
+          ],
+        ),
       ),
     );
   }
 }
 
-class CustomButton extends StatelessWidget {
-  final String title;
-  final Color backColor;
-  const CustomButton({
-    Key? key,
-    required this.title,
-    required this.backColor,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      padding: EdgeInsets.symmetric(vertical: Dimensions.height15 / 2),
-      decoration: BoxDecoration(
-        color: backColor,
-        borderRadius: BorderRadius.circular(Dimensions.radius30),
-      ),
-      child: SmallText(
-        text: title,
-        color: AppColor.whiteTextColor,
-        size: Dimensions.font15,
-        weight: FontWeight.w500,
-      ),
-    );
-  }
-}
-
-class FilterContainer extends GetView<HomeController> {
-  const FilterContainer({super.key});
+class HomeHeader extends GetView<HomeController> {
+  const HomeHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return Container(
-        height: Dimensions.height30 * 1.3,
-        margin: EdgeInsets.symmetric(vertical: Dimensions.height10),
-        child: ListView.builder(
-          itemCount: controller.filterList.length,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) {
-            return Obx(() {
-              return GestureDetector(
-                onTap: () {
-                  controller.updateSelectedFilter(index);
-                  controller.filterGym(controller.filterList[index].code);
-                },
-                child: Container(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.symmetric(
-                      vertical: Dimensions.height5,
-                      horizontal: Dimensions.width15),
-                  margin:
-                      EdgeInsets.symmetric(horizontal: Dimensions.width5 / 2),
-                  decoration: BoxDecoration(
-                    color: controller.selectedFilter.value == index
-                        ? AppColor.blackColor
-                        : AppColor.whiteTextColor,
-                    borderRadius: BorderRadius.circular(Dimensions.radius20),
-                    border: Border.all(),
+      return InkWell(
+        onTap: () => Get.toNamed(SearchRoutes.search),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(Icons.location_pin, size: Dimensions.font16),
+                  SizedBox(width: Dimensions.width5 / 2),
+                  SmallText(
+                    text: controller.currentLocality.value,
+                    size: Dimensions.font14,
+                    weight: FontWeight.w500,
                   ),
-                  child: Text(
-                    FilterModel.filterList[index].name,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: controller.selectedFilter.value == index
-                          ? AppColor.whiteTextColor
-                          : AppColor.blackColor,
-                    ),
-                  ),
-                ),
-              );
-            });
-          },
+                  SizedBox(width: Dimensions.width5 / 2),
+                  Icon(Icons.arrow_drop_down, size: Dimensions.iconSize20),
+                ],
+              ),
+              SmallText(
+                text: controller.currentAddress.value,
+                size: Dimensions.font13,
+                weight: FontWeight.w400,
+              ),
+            ],
+          ),
         ),
       );
     });
@@ -119,9 +82,7 @@ class SearchContainer extends StatelessWidget {
       onTap: () => Get.toNamed(SearchRoutes.search),
       child: Container(
         margin: EdgeInsets.symmetric(
-          vertical: Dimensions.height5,
-          horizontal: Dimensions.width15 / 2,
-        ),
+            vertical: Dimensions.height10, horizontal: Dimensions.width15 / 2),
         padding: EdgeInsets.symmetric(
             vertical: Dimensions.height5, horizontal: Dimensions.width15 / 2),
         decoration: BoxDecoration(
@@ -162,41 +123,52 @@ class SearchContainer extends StatelessWidget {
   }
 }
 
-class HomeHeader extends GetView<HomeController> {
-  const HomeHeader({super.key});
+class FilterContainer extends GetView<HomeController> {
+  const FilterContainer({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return InkWell(
-        onTap: () => Get.toNamed(SearchRoutes.search),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(Icons.location_pin, size: Dimensions.font16),
-                  SizedBox(width: Dimensions.width5 / 2),
-                  Text(
-                    controller.currentLocality.value,
-                    style: const TextStyle(
-                        fontSize: 15, fontWeight: FontWeight.w600),
+      return SizedBox(
+        height: Dimensions.height30 * 1.3,
+        child: ListView.builder(
+          itemCount: controller.filterList.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context, index) {
+            return Obx(() {
+              return GestureDetector(
+                onTap: () {
+                  controller.updateSelectedFilter(index);
+                  controller.filterGym(controller.filterList[index].code);
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(
+                      vertical: Dimensions.height5,
+                      horizontal: Dimensions.width15),
+                  margin:
+                      EdgeInsets.symmetric(horizontal: Dimensions.width5 / 2),
+                  decoration: BoxDecoration(
+                    color: controller.selectedFilter.value == index
+                        ? AppColor.blackColor
+                        : AppColor.whiteTextColor,
+                    borderRadius: BorderRadius.circular(Dimensions.radius20),
+                    border: Border.all(),
                   ),
-                  SizedBox(width: Dimensions.width5 / 2),
-                  Icon(Icons.arrow_drop_down, size: Dimensions.iconSize20),
-                ],
-              ),
-              Text(
-                controller.currentAddress.value,
-                style: const TextStyle(
-                    fontSize: 13, fontWeight: FontWeight.normal),
-              ),
-            ],
-          ),
+                  child: Text(
+                    FilterModel.filterList[index].name,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: controller.selectedFilter.value == index
+                          ? AppColor.whiteTextColor
+                          : AppColor.blackColor,
+                    ),
+                  ),
+                ),
+              );
+            });
+          },
         ),
       );
     });
@@ -258,12 +230,13 @@ class GymList extends GetView<HomeController> {
                                   ),
                                   image: DecorationImage(
                                     fit: BoxFit.cover,
-                                    image:  FadeInImage(
+                                    image: FadeInImage(
                                       fit: BoxFit.cover,
                                       placeholder:
                                           const AssetImage("assets/gym.jpg"),
-                                      image: NetworkImage(controller.gymList[index].coverImage??
-                                        "https://images.pexels.com/photos/4553611/pexels-photo-4553611.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                                      image: NetworkImage(
+                                        controller.gymList[index].coverImage ??
+                                            "https://images.pexels.com/photos/4553611/pexels-photo-4553611.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
                                       ),
                                     ).image,
                                   ),
@@ -408,5 +381,33 @@ class GymList extends GetView<HomeController> {
                   ),
                 );
     });
+  }
+}
+
+class CustomButton extends StatelessWidget {
+  final String title;
+  final Color backColor;
+  const CustomButton({
+    Key? key,
+    required this.title,
+    required this.backColor,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.symmetric(vertical: Dimensions.height15 / 2),
+      decoration: BoxDecoration(
+        color: backColor,
+        borderRadius: BorderRadius.circular(Dimensions.radius30),
+      ),
+      child: SmallText(
+        text: title,
+        color: AppColor.whiteTextColor,
+        size: Dimensions.font15,
+        weight: FontWeight.w500,
+      ),
+    );
   }
 }

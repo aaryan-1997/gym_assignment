@@ -14,7 +14,7 @@ class SearchPage extends GetView<HomeController> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          const SliverAppBar(title: SearchHeader()),
+          const SliverAppBar(title: SearchHeader(),pinned: true),
           SliverToBoxAdapter(
             child: Container(
               padding: EdgeInsets.zero,
