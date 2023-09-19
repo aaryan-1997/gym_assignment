@@ -343,7 +343,7 @@ class HomeHeader extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return GestureDetector(
+      return InkWell(
         onTap: () => Get.toNamed(SearchRoutes.search),
         child: Center(
           child: Column(

@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geocoding/geocoding.dart';
 
 import '../../core/config/sp_key.dart';
+import '../../data/models/city_response.dart';
 import '../../data/models/filter_model.dart';
 import '../../data/services/handling_exception.dart';
 import '../splash/splash_controller.dart';
@@ -22,9 +23,13 @@ class HomeController extends GetxController {
   Position? currentPosition;
   RxString currentLocality = "".obs;
   RxString currentAddress = "".obs;
+  RxString currentCity = "".obs;
 
   RxList<Gym> mainGymList = <Gym>[].obs;
   RxList<Gym> gymList = <Gym>[].obs;
+
+  RxList<GymCity> cities = <GymCity>[].obs;
+  RxList<PopularLocation> popularLocation = <PopularLocation>[].obs;
 
   RxBool isLoading = false.obs;
 
@@ -35,6 +40,7 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     getCurrentPosition();
+    getCities();
     super.onInit();
   }
 
@@ -50,7 +56,7 @@ class HomeController extends GetxController {
         longitude = "${currentPosition!.longitude}";
       }
       isLoading.value = true;
-      Response response = await apiClient.get(
+      Response response = await apiClient.getRequest(
           "${Api.nearestgym}?page=$page&limit=$count&lat=$latitude&long=$longitude");
       if (HandlingException.checkStatusCode(response)) {
         var result = gymResponseFromJson(response.bodyString ?? "");
@@ -86,6 +92,24 @@ class HomeController extends GetxController {
     }
   }
 
+  Future<void> getCities() async {
+    try {
+      Response response = await apiClient.getRequest(Api.cities);
+      if (HandlingException.checkStatusCode(response)) {
+        var result = cityResponseFromJson(response.bodyString ?? "");
+        if (result.status == true) {
+          cities.value = result.gymCity ?? [];
+          if (cities.isNotEmpty) {
+            currentCity.value = cities[0].city ?? "";
+            popularLocation.value = cities[0].popularLocations ?? [];
+          }
+        }
+      }
+    } catch (e) {}
+  }
+
+//=================================
+
   updateSelectedFilter(index) {
     selectedFilter.value = index;
   }
@@ -94,7 +118,21 @@ class HomeController extends GetxController {
     if (code.isEmpty) {
       gymList.value = mainGymList;
     } else {
-      gymList.value = mainGymList.where((p0) => p0.categoryName == code).toList();
+      gymList.value =
+          mainGymList.where((p0) => p0.categoryName == code).toList();
+    }
+  }
+
+  filterGymCity(String cityName) {
+    try {
+      currentCity.value =
+          cities.firstWhere((element) => element.city == cityName).city ?? "";
+      popularLocation.value = cities
+              .firstWhere((element) => element.city == cityName)
+              .popularLocations ??
+          [];
+    } catch (e) {
+      log("filter_gym_city_ $e");
     }
   }
 }
