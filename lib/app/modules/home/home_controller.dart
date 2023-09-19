@@ -23,7 +23,10 @@ class HomeController extends GetxController {
   RxString currentLocality = "".obs;
   RxString currentAddress = "".obs;
 
+  RxList<Gym> mainGymList = <Gym>[].obs;
   RxList<Gym> gymList = <Gym>[].obs;
+
+  RxBool isLoading = false.obs;
 
   RxInt selectedFilter = 0.obs;
 
@@ -40,19 +43,25 @@ class HomeController extends GetxController {
       count = "10",
       String lat = "",
       String lng = ""}) async {
-    var latitude = "", longitude = "";
-    if (lat.validate().isEmpty || lng.validate().isEmpty) {
-      latitude = "${currentPosition!.latitude}";
-      longitude = "${currentPosition!.longitude}";
-    }
-
-    Response response = await apiClient.get(
-        "${Api.nearestgym}?page=$page&limit=$count&lat=$latitude&long=$longitude");
-    if (HandlingException.checkStatusCode(response)) {
-      var result = gymResponseFromJson(response.bodyString ?? "");
-      if (result.status == true) {
-        gymList.value = result.gym ?? [];
+    try {
+      var latitude = "", longitude = "";
+      if (lat.validate().isEmpty || lng.validate().isEmpty) {
+        latitude = "${currentPosition!.latitude}";
+        longitude = "${currentPosition!.longitude}";
       }
+      isLoading.value = true;
+      Response response = await apiClient.get(
+          "${Api.nearestgym}?page=$page&limit=$count&lat=$latitude&long=$longitude");
+      if (HandlingException.checkStatusCode(response)) {
+        var result = gymResponseFromJson(response.bodyString ?? "");
+        if (result.status == true) {
+          gymList.value = result.gym ?? [];
+          mainGymList.value = result.gym ?? [];
+        }
+      }
+      isLoading.value = false;
+    } catch (e) {
+      isLoading.value = false;
     }
   }
 
@@ -79,5 +88,13 @@ class HomeController extends GetxController {
 
   updateSelectedFilter(index) {
     selectedFilter.value = index;
+  }
+
+  filterGym(String code) {
+    if (code.isEmpty) {
+      gymList.value = mainGymList;
+    } else {
+      gymList.value = mainGymList.where((p0) => p0.categoryName == code).toList();
+    }
   }
 }

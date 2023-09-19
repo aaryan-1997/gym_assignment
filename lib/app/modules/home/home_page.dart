@@ -34,7 +34,7 @@ class GymList extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return controller.gymList.isEmpty
+      return controller.gymList.isEmpty && controller.isLoading.value == true
           ? SliverFillRemaining(
               hasScrollBody: false,
               child: Center(
@@ -47,148 +47,159 @@ class GymList extends GetView<HomeController> {
                 ),
               ),
             )
-          : SliverList(
-              delegate: SliverChildBuilderDelegate(
-                childCount: controller.gymList.length,
-                (context, index) {
-                  return InkWell(
-                    onTap: () {},
-                    child: Container(
-                      width: Get.width,
-                      margin: EdgeInsets.symmetric(
-                        vertical: Dimensions.height5,
-                        horizontal: Dimensions.width10,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(Dimensions.radius15),
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: Get.height * 0.35,
-                            width: Get.width,
-                            padding: EdgeInsets.zero,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(Dimensions.radius15),
-                                topRight: Radius.circular(Dimensions.radius15),
-                              ),
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: const FadeInImage(
-                                  fit: BoxFit.cover,
-                                  placeholder: AssetImage("assets/gym.jpeg"),
-                                  image: NetworkImage(
-                                    "https://www.shutterstock.com/shutterstock/photos/721723381/display_1500/stock-photo-modern-light-gym-sports-equipment-in-gym-barbells-of-different-weight-on-rack-721723381.jpg",
-                                  ),
-                                ).image,
-                              ),
-                            ),
-                            child: Container(
-                              alignment: Alignment.bottomCenter,
-                              child: Container(
-                                height: Dimensions.height80,
+          : controller.gymList.isEmpty && controller.isLoading.value == false
+              ? const SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(child: SmallText(text: "Data not found")),
+                )
+              : SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    childCount: controller.gymList.length,
+                    (context, index) {
+                      return InkWell(
+                        onTap: () {},
+                        child: Container(
+                          width: Get.width,
+                          margin: EdgeInsets.symmetric(
+                            vertical: Dimensions.height5,
+                            horizontal: Dimensions.width10,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.circular(Dimensions.radius15),
+                          ),
+                          child: Column(
+                            children: [
+                              Container(
+                                height: Get.height * 0.35,
                                 width: Get.width,
-                                decoration: const BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight,
-                                    colors: [
-                                      AppColor.redColor,
-                                      AppColor.blackColor
-                                    ],
+                                padding: EdgeInsets.zero,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft:
+                                        Radius.circular(Dimensions.radius15),
+                                    topRight:
+                                        Radius.circular(Dimensions.radius15),
+                                  ),
+                                  image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: const FadeInImage(
+                                      fit: BoxFit.cover,
+                                      placeholder:
+                                          AssetImage("assets/gym.jpeg"),
+                                      image: NetworkImage(
+                                        "https://www.shutterstock.com/shutterstock/photos/721723381/display_1500/stock-photo-modern-light-gym-sports-equipment-in-gym-barbells-of-different-weight-on-rack-721723381.jpg",
+                                      ),
+                                    ).image,
                                   ),
                                 ),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: Dimensions.width10,
-                                    vertical: Dimensions.height5,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      SmallText(
-                                        text:
-                                            "${controller.gymList[index].gymName}",
-                                        color: AppColor.whiteTextColor,
-                                        size: Dimensions.font20,
+                                child: Container(
+                                  alignment: Alignment.bottomCenter,
+                                  child: Container(
+                                    height: Dimensions.height80,
+                                    width: Get.width,
+                                    decoration: const BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                        colors: [
+                                          AppColor.redColor,
+                                          AppColor.blackColor
+                                        ],
                                       ),
-                                      SizedBox(height: Dimensions.height5),
-                                      SmallText(
-                                        text:
-                                            "${controller.gymList[index].distanceText} • ${controller.gymList[index].address1} ${controller.gymList[index].address2}",
-                                        color: AppColor.whiteTextColor,
-                                        size: Dimensions.font12,
-                                        weight: FontWeight.normal,
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: Dimensions.width10,
+                                        vertical: Dimensions.height5,
                                       ),
-                                    ],
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          SmallText(
+                                            text:
+                                                "${controller.gymList[index].gymName}",
+                                            color: AppColor.whiteTextColor,
+                                            size: Dimensions.font20,
+                                          ),
+                                          SizedBox(height: Dimensions.height5),
+                                          SmallText(
+                                            text:
+                                                "${controller.gymList[index].distanceText} • ${controller.gymList[index].address1} ${controller.gymList[index].address2}",
+                                            color: AppColor.whiteTextColor,
+                                            size: Dimensions.font12,
+                                            weight: FontWeight.normal,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
-                          SizedBox(height: Dimensions.height10),
-                          Container(
-                            height: Dimensions.height100,
-                            width: Get.width,
-                            decoration: BoxDecoration(
-                              color: AppColor.blackColor,
-                              borderRadius: BorderRadius.only(
-                                bottomLeft:
-                                    Radius.circular(Dimensions.radius15),
-                                bottomRight:
-                                    Radius.circular(Dimensions.radius15),
-                              ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SmallText(
-                                  text: controller.gymList[index].planPrice ??
-                                      "STARTING AT ₹1833/month",
-                                  color: AppColor.whiteTextColor,
-                                  size: Dimensions.font18,
-                                ),
-                                SizedBox(height: Dimensions.height10),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: Dimensions.width10),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      const Expanded(
-                                        child: CustomButton(
-                                          title: "FREE FIRST DAY",
-                                          backColor: AppColor.redButtonColor,
-                                        ),
-                                      ),
-                                      SizedBox(width: Dimensions.width10),
-                                      const Expanded(
-                                        child: CustomButton(
-                                          title: "BUY NOW",
-                                          backColor: AppColor.greyColor,
-                                        ),
-                                      ),
-                                    ],
+                              SizedBox(height: Dimensions.height10),
+                              Container(
+                                height: Dimensions.height100,
+                                width: Get.width,
+                                decoration: BoxDecoration(
+                                  color: AppColor.blackColor,
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft:
+                                        Radius.circular(Dimensions.radius15),
+                                    bottomRight:
+                                        Radius.circular(Dimensions.radius15),
                                   ),
-                                )
-                              ],
-                            ),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SmallText(
+                                      text:
+                                          controller.gymList[index].planPrice ??
+                                              "STARTING AT ₹1833/month",
+                                      color: AppColor.whiteTextColor,
+                                      size: Dimensions.font18,
+                                    ),
+                                    SizedBox(height: Dimensions.height10),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: Dimensions.width10),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          const Expanded(
+                                            child: CustomButton(
+                                              title: "FREE FIRST DAY",
+                                              backColor:
+                                                  AppColor.redButtonColor,
+                                            ),
+                                          ),
+                                          SizedBox(width: Dimensions.width10),
+                                          const Expanded(
+                                            child: CustomButton(
+                                              title: "BUY NOW",
+                                              backColor: AppColor.greyColor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            );
+                        ),
+                      );
+                    },
+                  ),
+                );
     });
   }
 }
@@ -238,6 +249,7 @@ class FilterContainer extends GetView<HomeController> {
               return GestureDetector(
                 onTap: () {
                   controller.updateSelectedFilter(index);
+                  controller.filterGym(controller.filterList[index].code);
                 },
                 child: Container(
                   alignment: Alignment.center,
